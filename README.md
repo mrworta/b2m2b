@@ -16,3 +16,12 @@ M->B)
  - The bridge subscribes to a specific multicast group using IGMP.
  - A multicast packet it received and gets translated to broadcast. 
  - Again the original source IP is used (spoofed) to send the packet.
+
+: Compile?
+
+It should compile on nearly any \*nix if you provide libpcap.
+Just 'make'.
+
+: Run?
+
+Yes. Run.
