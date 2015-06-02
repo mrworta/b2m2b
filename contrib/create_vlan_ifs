@@ -15,10 +15,13 @@ ZONE_4="101 114"
 
 IP=`ip -4 addr show dev eth0`
 
+ZONE=void
 [[ $IP =~ $IP_1 ]] && ZONE=$ZONE_1
 [[ $IP =~ $IP_2 ]] && ZONE=$ZONE_2
 [[ $IP =~ $IP_3 ]] && ZONE=$ZONE_3
 [[ $IP =~ $IP_4 ]] && ZONE=$ZONE_4
+
+[[ $ZONE == void ]] && exit
 
 echo Creating VLAN Range $ZONE
 modprobe 8021q
