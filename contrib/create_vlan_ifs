@@ -21,6 +21,7 @@ IP=`ip -4 addr show dev eth0`
 [[ $IP =~ $IP_4 ]] && ZONE=$ZONE_4
 
 echo Creating VLAN Range $ZONE
+modprobe 8021q
 
 for i in `seq $ZONE`
 do
