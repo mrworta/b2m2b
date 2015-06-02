@@ -1,7 +1,47 @@
-#!/bin/bash
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          b2m2b
+# Required-Start:    $syslog
+# Required-Stop:     $syslog
+# Should-Start:
+# Default-Start:     2 3 
+# Default-Stop:
+# Short-Description: b2m2b broad-/multicast bridge
+# Description:       Updates, initializes and starts multicast bridge.
+#                    (also creates VLAN interfaces)
+#                    
+### END INIT INFO
 
-pushd ~/b2m2b
-git pull
-contrib/create_vlan_ifs
-nohup contrib/run_all &
-popd
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/opt/b2m2b
+. /lib/init/vars.sh
+
+B_DIR=/opt/b2m2b
+
+do_status () {
+        ps -ef | grep b2m2b
+	netstat -i 
+	netstat -gn | grep 239.66.66.66
+}
+
+case "$1" in
+  start|"")
+          cd $B_DIR
+	  git pull && make
+	  contrib/create_vlan_ifs
+	  contrib/run_all
+        ;;
+  restart|reload|force-reload)
+        exit 3
+        ;;
+  stop)
+        $B_DIR/contrib/kill_all
+        ;;
+  status)
+        do_status
+        exit $?
+        ;;
+  *)
+        echo "Usage: b2m2b [start|stop|status]" >&2
+        exit 3
+        ;;
+esac
