@@ -5,16 +5,18 @@ IGNORE_NICS="lo sixxs sit0 wwan0 ".$MCAST
 UPDATE=1
 B_DIR=/opt/b2m2b
 
+pushd $B_DIR
+
 if [ $UPDATE == 1 ]
 then
  echo Updating...
- pushd $B_DIR
  git pull && make
- popd
 fi
 
 for x in $NICS/*
 do
  NIC=${x/$NICS\//}
- [[ $IGNORE_NICS =~ $NIC ]]  || ./do_loop $MCAST $NIC &
+ [[ $IGNORE_NICS =~ $NIC ]]  || contrib/do_loop $MCAST $NIC &
 done
+
+popd
