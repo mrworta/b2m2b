@@ -186,8 +186,7 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 		break;
 	
         case 1: 
-		if ( count_mcast+count_bcast+count_bogus % 100 == 0) { 
-		  print_counter(count_bcast, count_mcast, count_bogus); 
+		if ( count_mcast % 100 == 0) { 
     		  syslog (LOG_INFO, "%s[%d]/%s[%d] bogus:[%d]", intf_mcast, count_mcast, intf_bcast, count_bcast, count_bogus);  
 		}
 		break;
@@ -254,7 +253,6 @@ int join_mc_group()
    struct sockaddr_in saddr;
 
    get_ip(intf_mcast, ip_address);
-   if (get_ip(intf_mcast, ip_address)) { printf ("Join using IP %s for group %s.\n", ip_address, MCAST_GROUP); }
    
    // set content of struct saddr and imreq to zero
    memset(&saddr, 0, sizeof(struct sockaddr_in));
@@ -303,8 +301,8 @@ int main(int argc,char **argv)
     get_mac(intf_mcast, intf_mcast_mac); 
     get_mac(intf_bcast, intf_bcast_mac);
 
-    printf ("Using Mcast if %s and Bcast if %s.\n", intf_mcast, intf_bcast);  
-    syslog (LOG_NOTICE, "Using Mcast if %s and Bcast if %s.\n", intf_mcast, intf_bcast);  
+    printf ("Bridge for interfaces m:%s b:%s\n", intf_mcast, intf_bcast);  
+    syslog (LOG_NOTICE, "Bridge for interfaces m:%s b:%s\n", intf_mcast, intf_bcast);  
 
     fflush(stdout); 
 
@@ -329,9 +327,11 @@ int main(int argc,char **argv)
     pcap_setdirection(bcap, PCAP_D_IN); // Capture only inbound packets. $ToDo: TEST Loop Protection
     pcap_setdirection(mcap, PCAP_D_INOUT); // Capture packets both ways. $ToDo: bcast may be duplicated
 
-    printf("Current filter mcast: %s\n", PCAP_MFILTER); 
-    printf("Current filter bcast: %s\n", PCAP_BFILTER); 
-    printf("Processing....\n"); fflush(stdout); 
+    if ( DEBUG > 1 ) {
+       printf("Current filter mcast: %s\n", PCAP_MFILTER); 
+       printf("Current filter bcast: %s\n", PCAP_BFILTER); 
+       printf("Processing....\n"); fflush(stdout); 
+    }
 
     int b=0; int m=0;
 
