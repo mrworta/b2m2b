@@ -1,0 +1,7 @@
+#!/bin/bash
+
+pushd ~/b2m2b
+git pull
+contrib/create_vlan_ifs
+nohup contrib/run_all &
+popd
