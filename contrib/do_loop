@@ -7,6 +7,6 @@ test  -z "$*"  && {
 }
 
 while ( true ) do
-  /opt/b2m2b $*
+  /opt/b2m2b/b2m2b $*
   /bin/sleep 30
 done

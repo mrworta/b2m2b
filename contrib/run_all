@@ -2,21 +2,10 @@
 MCAST="eth0"
 NICS=/sys/class/net
 IGNORE_NICS="lo sixxs sit0 wwan0 ".$MCAST
-UPDATE=1
 B_DIR=/opt/b2m2b
-
-pushd $B_DIR
-
-if [ $UPDATE == 1 ]
-then
- echo Updating...
- git pull && make
-fi
 
 for x in $NICS/*
 do
  NIC=${x/$NICS\//}
- [[ $IGNORE_NICS =~ $NIC ]]  || contrib/do_loop $MCAST $NIC &
+ [[ $IGNORE_NICS =~ $NIC ]]  || $B_DIR/contrib/do_loop $MCAST $NIC &
 done
-
-popd
