@@ -1,0 +1,30 @@
+#!/bin/bash
+BASE_IF=eth0
+
+IP_1="172\.30\.1\..*\/24"
+ZONE_1="101 114"
+
+IP_2="172\.30\.2\..*\/24"
+ZONE_2="201 212"
+
+IP_3="172\.30\.3\..*\/24"
+ZONE_3="301 305"
+
+IP_4="10\.2\.2\..*\/24"
+ZONE_4="101 103"
+
+IP=`ip -4 addr show dev eth0`
+
+[[ $IP =~ $IP_1 ]] && ZONE=$ZONE_1
+[[ $IP =~ $IP_2 ]] && ZONE=$ZONE_2
+[[ $IP =~ $IP_3 ]] && ZONE=$ZONE_3
+[[ $IP =~ $IP_4 ]] && ZONE=$ZONE_4
+
+echo Creating VLAN Range $ZONE
+
+for i in `seq $ZONE`
+do
+  vconfig add $BASE_IF $i
+done
+
+
