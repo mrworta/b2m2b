@@ -1,0 +1,7 @@
+#!/bin/bash
+# Basic install Script for debian based (raspian) systems.
+
+apt-get install libpcap-dev make gcc git
+git clone https://github.com/mrworta/b2m2b.git
+cd b2m2b
+make

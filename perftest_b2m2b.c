@@ -15,6 +15,7 @@
 #include <limits.h>
 #include <string.h>
 #include <unistd.h>
+#include <syslog.h>
 #include <sys/ioctl.h>
  
 // Our packet types:
@@ -26,7 +27,7 @@
 // ###### CONFIG ####### 
 // #######################################################
 
-static const int DEBUG = 3;
+static const int DEBUG = 1;
  
 char intf_mcast[64];
 char intf_bcast[64];
@@ -74,6 +75,7 @@ struct udpheader { // total udp header length: 8 bytes (=64 bits)
  unsigned short int udph_chksum;
 };
 
+
 // IP Header Checksum
 static unsigned short compute_checksum(unsigned short *addr, unsigned int count) {
   register unsigned long sum = 0;
@@ -91,7 +93,6 @@ static unsigned short compute_checksum(unsigned short *addr, unsigned int count)
 
   return ((unsigned short)sum);
 }
-
 
 // Fetch MAC Address from interface
 int get_mac(char *iface, unsigned char *mac_address)
@@ -187,6 +188,7 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
         case 1: 
 		if ( count_mcast+count_bcast+count_bogus % 100 == 0) { 
 		  print_counter(count_bcast, count_mcast, count_bogus); 
+    		  syslog (LOG_INFO, "%s[%d]/%s[%d] bogus:[%d]", intf_mcast, count_mcast, intf_bcast, count_bcast, count_bogus);  
 		}
 		break;
     }
@@ -293,11 +295,16 @@ int main(int argc,char **argv)
     struct pcap_pkthdr hdr;    
     struct ether_header *eptr;  
 
+    openlog("b2m2b", LOG_PID, LOG_LOCAL0);
+
     if ( argc == 3 ) { memcpy(intf_mcast, argv[1],64); memcpy(intf_bcast, argv[2],64); 
     } else { printf("Syntax: b2m2b <mcast-if> <bcast-if>\n\n"); exit(1); }
 
-    if (get_mac(intf_mcast, intf_mcast_mac)) { printf ("Using Mcast %s @ %s.\n", intf_mcast, intf_mcast_mac); } 
-    if (get_mac(intf_bcast, intf_bcast_mac)) { printf ("Using Bcast %s @ %s.\n", intf_bcast, intf_bcast_mac); } 
+    get_mac(intf_mcast, intf_mcast_mac); 
+    get_mac(intf_bcast, intf_bcast_mac);
+
+    printf ("Using Mcast if %s and Bcast if %s.\n", intf_mcast, intf_bcast);  
+    syslog (LOG_NOTICE, "Using Mcast if %s and Bcast if %s.\n", intf_mcast, intf_bcast);  
 
     fflush(stdout); 
 

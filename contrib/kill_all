@@ -1,0 +1,3 @@
+#!/bin/bash
+killall do_loop
+killall b2m2b

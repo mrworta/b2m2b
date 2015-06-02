@@ -1,21 +1,19 @@
 #!/bin/bash
 # Dirty pull/compile/run loop.
 
-UPDATE=1
 WORKDIR=..
 BINARY=b2m2b 
+
+test  -z "$*"  && { 
+	echo No parameter. No good.
+	exit
+}
 
 pushd $WORKDIR
 
 while ( true ) do
-  if [ $UPDATE == 1 ] 
-  then
-	echo Updating...
-	git pull && make
-  fi 
-
   ./$BINARY $*
-  /bin/sleep 2
+  /bin/sleep 30
 done
 
 popd
