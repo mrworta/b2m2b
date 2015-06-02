@@ -42,7 +42,7 @@ static const char MCAST_DMAC[] = "01:00:5e:42:42:42"; // $ToDo: Calculate
 static char PCAP_MFILTER[] = "udp and dst host 239.66.66.66";
 static char PCAP_BFILTER[] = "broadcast and portrange 1024-65535";
 
-static int LAZY = 0;
+static int LAZY = 1;
 
 // #######################################################
 
