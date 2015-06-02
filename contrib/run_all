@@ -3,12 +3,12 @@ MCAST="eth0"
 NICS=/sys/class/net
 IGNORE_NICS="lo sixxs sit0 wwan0 ".$MCAST
 UPDATE=1
-WORKDIR=..
+B_DIR=/opt/b2m2b
 
 if [ $UPDATE == 1 ]
 then
  echo Updating...
- pushd $WORKDIR
+ pushd $B_DIR
  git pull && make
  popd
 fi

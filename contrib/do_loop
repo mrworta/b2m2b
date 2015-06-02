@@ -1,19 +1,12 @@
 #!/bin/bash
-# Dirty pull/compile/run loop.
-
-WORKDIR=..
-BINARY=b2m2b 
+# Dirty run loop.
 
 test  -z "$*"  && { 
 	echo No parameter. No good.
 	exit
 }
 
-pushd $WORKDIR
-
 while ( true ) do
-  ./$BINARY $*
+  /opt/b2m2b $*
   /bin/sleep 30
 done
-
-popd
