@@ -1,32 +1,30 @@
 #!/bin/bash
 BASE_IF=eth0
 
-IP_1="172\.30\.1\..*\/24"
-ZONE_1="101 114"
-
-IP_2="172\.30\.2\..*\/24"
-ZONE_2="201 212"
-
-IP_3="172\.30\.3\..*\/24"
-ZONE_3="301 305"
-
-IP_4="10\.100\.100\..*\/24"
-ZONE_4="101 114"
+IP_A="172\.30\.1\..*\/24"
+IP_B="172\.30\.2\..*\/24"
+IP_C="172\.30\.3\..*\/24"
+IP_D="172\.30\.4\..*\/24"
+IP_T="10\.100\.2\..*\/24"
 
 IP=`ip -4 addr show dev eth0`
-
 ZONE=void
-[[ $IP =~ $IP_1 ]] && ZONE=$ZONE_1
-[[ $IP =~ $IP_2 ]] && ZONE=$ZONE_2
-[[ $IP =~ $IP_3 ]] && ZONE=$ZONE_3
-[[ $IP =~ $IP_4 ]] && ZONE=$ZONE_4
 
-[[ $ZONE == void ]] && exit
+[[ $IP =~ $IP_A ]] && ZONE=`seq 101 114`
+[[ $IP =~ $IP_B ]] && ZONE=`seq 201 212`
+[[ $IP =~ $IP_C ]] && ZONE=`seq 301 306`
+[[ $IP =~ $IP_D ]] && ZONE="2 3 4 5 15 20"
+[[ $IP =~ $IP_T ]] && ZONE=`seq 101 115`
+
+[[ $ZONE == void ]] && {
+ echo /me is not in known network.
+ exit
+}
 
 echo Creating VLAN Range $ZONE
 modprobe 8021q
 
-for i in `seq $ZONE`
+for i in $ZONE
 do
   vconfig add $BASE_IF $i
 done
