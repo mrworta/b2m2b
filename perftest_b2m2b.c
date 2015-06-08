@@ -270,7 +270,7 @@ int join_mc_group()
    imreq.imr_multiaddr.s_addr = inet_addr(MCAST_GROUP);
    imreq.imr_interface.s_addr = inet_addr(ip_address);
 
-   // JOIN multicast group on default interface
+   // JOIN multicast group on selected interface
    status = setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, 
               (const void *)&imreq, sizeof(struct ip_mreq));
 

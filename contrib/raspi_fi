@@ -1,7 +1,9 @@
 #!/bin/bash
 # Basic install Script for debian based (raspian) systems.
 
-apt-get install libpcap-dev make gcc git vlan
-git clone https://github.com/mrworta/b2m2b.git
-cd b2m2b
-make
+apt-get install libpcap-dev make gcc git vlan 
+cd /opt
+git clone https://github.com/mrworta/b2m2b.git && {
+ cd b2m2b
+ make
+}
