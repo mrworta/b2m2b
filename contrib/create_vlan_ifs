@@ -10,7 +10,7 @@ IP_T="10\.100\.2\..*\/24"
 IP=`ip -4 addr show dev eth0`
 ZONE=void
 
-[[ $IP =~ $IP_A ]] && ZONE=`seq 101 114`
+[[ $IP =~ $IP_A ]] && ZONE=`seq 101 115`
 [[ $IP =~ $IP_B ]] && ZONE=`seq 201 212`
 [[ $IP =~ $IP_C ]] && ZONE=`seq 301 306`
 [[ $IP =~ $IP_D ]] && ZONE="2 3 4 5 15 20"
