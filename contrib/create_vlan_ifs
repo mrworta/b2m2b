@@ -16,7 +16,7 @@ ZONE=void
 #[[ $IP =~ $IP_D ]] && ZONE="2 3 4 5 15 20"
 #[[ $IP =~ $IP_T ]] && ZONE=`seq 101 115`
 
-ZONE=`/opt/b2m2b/zone`
+ZONE=`/opt/b2m2b/etc/zone`
 
 [[ $ZONE == void ]] && {
  echo /me is not in known network.
