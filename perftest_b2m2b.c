@@ -186,9 +186,6 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 		break;
 	
         case 1: 
-		if ( count_mcast % 100 == 0) { 
-    		  syslog (LOG_INFO, "%s[%d]/%s[%d] bogus:[%d]", intf_mcast, count_mcast, intf_bcast, count_bcast, count_bogus);  
-		}
 		break;
     }
 
@@ -197,6 +194,12 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
     {  
 	case PACKET_MCAST:
 		count_mcast++;
+
+		if ( DEBUG > 0 ) {
+		  if ( count_mcast % 100 == 0) { 
+    		    syslog (LOG_INFO, "%s[%d]/%s[%d] bogus:[%d]", intf_mcast, count_mcast, intf_bcast, count_bcast, count_bogus);  
+		  }
+		}
 
 		// #### L2
 		// Set source MAC to own:
