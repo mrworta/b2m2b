@@ -249,8 +249,8 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 
 		// Checksumming:
 
-		udp_hdr->check = 0x0;
-	  	udp_hdr->check = udp_checksum(packet, pkthdr->len, ip_hdr->ip_src, ip_hdr->ip_dst);
+		//udp_hdr->check = 0x0;
+	  	//udp_hdr->check = udp_checksum(packet, pkthdr->len, ip_hdr->ip_src, ip_hdr->ip_dst);
 	
 		ip_hdr->ip_sum = 0x0;
 		ip_hdr->ip_sum = compute_checksum((unsigned short*)ip_hdr, ip_hdr->ip_hl<<2);
