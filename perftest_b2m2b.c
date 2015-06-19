@@ -70,11 +70,16 @@ struct ipheader {
  
 // UDP Checksum
 
-uint16_t udp_checksum(const void *buff, size_t len, struct in_addr src_addr, struct in_addr dest_addr)
+unsigned short int udp_checksum(const void *buff, int len)
 {
-        const uint16_t *buf=buff;
-        uint16_t *ip_src=(void *)&src_addr, *ip_dst=(void *)&dest_addr;
-        uint32_t sum;
+        const unsigned short int *buf=buff;
+	static char src_addr[15], dest_addr[15];
+         
+        src_addr[0] = 0x0a; src_addr[1] = 0x3c; src_addr[2] = 0x07; src_addr[3] = 0x45;        
+        dest_addr[0] = 0x0a; dest_addr[1] = 0x3c; dest_addr[2] = 0x07; dest_addr[3] = 0xff;
+         
+        unsigned short int *ip_src=(void *)&src_addr, *ip_dst=(void *)&dest_addr;                
+        unsigned short int sum;
         size_t length=len;
  
         // Calculate the sum                                            //
@@ -89,7 +94,7 @@ uint16_t udp_checksum(const void *buff, size_t len, struct in_addr src_addr, str
  
         if ( len & 1 )
                 // Add the padding if the packet lenght is odd          //
-                sum += *((uint8_t *)buf);
+                sum += *((unsigned char *)buf);
  
         // Add the pseudo-header                                        //
         sum += *(ip_src++);
@@ -106,9 +111,8 @@ uint16_t udp_checksum(const void *buff, size_t len, struct in_addr src_addr, str
                 sum = (sum & 0xFFFF) + (sum >> 16);
  
         // Return the one's complement of sum                           //
-        return ( (uint16_t)(~sum)  );
+        return ( (unsigned short int)(~sum)  );
 }
-
 // #####
 
 // IP Header Checksum
@@ -249,8 +253,8 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 
 		// Checksumming:
 
-		//udp_hdr->check = 0x0;
-	  	//udp_hdr->check = udp_checksum(packet, pkthdr->len, ip_hdr->ip_src, ip_hdr->ip_dst);
+		udp_hdr->check = 0x0;
+	  	//udp_hdr->check = udp_checksum(packet, pkthdr->len);
 	
 		ip_hdr->ip_sum = 0x0;
 		ip_hdr->ip_sum = compute_checksum((unsigned short*)ip_hdr, ip_hdr->ip_hl<<2);
@@ -274,6 +278,11 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 		inet_pton(AF_INET, MCAST_GROUP, &ip_hdr->ip_dst);
 
 		// Checksumming:
+
+
+		udp_hdr->check = 0x0;
+	  	//udp_hdr->check = udp_checksum(packet, pkthdr->len);
+
 		ip_hdr->ip_sum = 0x0;
 		ip_hdr->ip_sum = compute_checksum((unsigned short*)ip_hdr, ip_hdr->ip_hl<<2);
 
