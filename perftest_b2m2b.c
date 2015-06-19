@@ -68,14 +68,6 @@ struct ipheader {
  unsigned int       iph_destip;
 };
  
-struct udpheader { // total udp header length: 8 bytes (=64 bits)
- unsigned short int udph_srcport;
- unsigned short int udph_destport;
- unsigned short int udph_len;
- unsigned short int udph_chksum;
-};
-
-
 // UDP Checksum
 
 uint16_t udp_checksum(const void *buff, size_t len, struct in_addr src_addr, struct in_addr dest_addr)
@@ -257,6 +249,7 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 
 		// Checksumming:
 
+		udp_hdr->check = 0x0;
 	  	udp_hdr->check = udp_checksum(packet, pkthdr->len, ip_hdr->ip_src, ip_hdr->ip_dst);
 	
 		ip_hdr->ip_sum = 0x0;
