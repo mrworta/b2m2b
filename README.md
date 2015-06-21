@@ -24,4 +24,10 @@ Just 'make'.
 
 : Run?
 
-Yes. Run.
+Run the b2m2b binary. The Syntax is:
+
+./b2m2b <mCast-If> <bCast-If>
+
+You need to start a separate instance of b2m2b for each bCast-Interface.
+There are a few scripts located in ./contrib for starting instances eg. for each interface in the system.
+
