@@ -39,7 +39,7 @@ static const char MCAST_GROUP[] = "239.66.66.66";
 static const char MCAST_DMAC[] = "01:00:5e:42:42:42"; // $ToDo: Calculate
 
 // IF you want optimized filtering, replace "multicast" with your mcast group as "dst host". 
-static char PCAP_MFILTER[] = "udp and dst host 239.66.66.66";
+static char PCAP_MFILTER[] = "udp and dst net 239.66.66.66";
 static char PCAP_BFILTER[] = "broadcast and portrange 1024-65535";
 
 static int LAZY = 1;
@@ -68,13 +68,52 @@ struct ipheader {
  unsigned int       iph_destip;
 };
  
-struct udpheader { // total udp header length: 8 bytes (=64 bits)
- unsigned short int udph_srcport;
- unsigned short int udph_destport;
- unsigned short int udph_len;
- unsigned short int udph_chksum;
-};
+// UDP Checksum
 
+unsigned short int udp_checksum(const void *buff, int len)
+{
+        const unsigned short int *buf=buff;
+	static char src_addr[15], dest_addr[15];
+         
+        src_addr[0] = 0x0a; src_addr[1] = 0x3c; src_addr[2] = 0x07; src_addr[3] = 0x45;        
+        dest_addr[0] = 0x0a; dest_addr[1] = 0x3c; dest_addr[2] = 0x07; dest_addr[3] = 0xff;
+         
+        unsigned short int *ip_src=(void *)&src_addr, *ip_dst=(void *)&dest_addr;                
+        unsigned short int sum;
+        size_t length=len;
+ 
+        // Calculate the sum                                            //
+        sum = 0;
+        while (len > 1)
+        {
+                sum += *buf++;
+                if (sum & 0x80000000)
+                        sum = (sum & 0xFFFF) + (sum >> 16);
+                len -= 2;
+        }
+ 
+        if ( len & 1 )
+                // Add the padding if the packet lenght is odd          //
+                sum += *((unsigned char *)buf);
+ 
+        // Add the pseudo-header                                        //
+        sum += *(ip_src++);
+        sum += *ip_src;
+ 
+        sum += *(ip_dst++);
+        sum += *ip_dst;
+ 
+        sum += htons(IPPROTO_UDP);
+        sum += htons(length);
+ 
+        // Add the carries                                              //
+        while (sum >> 16)
+                sum = (sum & 0xFFFF) + (sum >> 16);
+ 
+        // Return the one's complement of sum                           //
+        return ( (unsigned short int)(~sum)  );
+}
+// #####
 
 // IP Header Checksum
 static unsigned short compute_checksum(unsigned short *addr, unsigned int count) {
@@ -144,7 +183,7 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
     // Packer headers
     const struct ether_header *e_hdr; 
     struct ip* ip_hdr;   
-    const struct udphdr* udp_hdr; 
+    struct udphdr* udp_hdr; 
 
     u_int length = pkthdr->len;  	/* packet header length  */
     
@@ -178,7 +217,6 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 
 		if (packet_type == PACKET_MCAST) { fprintf(stdout, "(m@%s >> b@%s)", intf_mcast, intf_bcast); };
                 if (packet_type == PACKET_BCAST) { fprintf(stdout, "(b@%s >> m@%s)", intf_bcast, intf_mcast); };
-                if (packet_type == PACKET_BOGUS) { fprintf(stdout, "(bogus @%s ; fix the filter)"); };
 		break;
 
 	case 3:
@@ -186,9 +224,6 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 		break;
 	
         case 1: 
-		if ( count_mcast % 100 == 0) { 
-    		  syslog (LOG_INFO, "%s[%d]/%s[%d] bogus:[%d]", intf_mcast, count_mcast, intf_bcast, count_bcast, count_bogus);  
-		}
 		break;
     }
 
@@ -197,6 +232,12 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
     {  
 	case PACKET_MCAST:
 		count_mcast++;
+
+		if ( DEBUG > 0 ) {
+		  if ( count_mcast % 100 == 0) { 
+    		    syslog (LOG_INFO, "%s[%d]/%s[%d] bogus:[%d]", intf_mcast, count_mcast, intf_bcast, count_bcast, count_bogus);  
+		  }
+		}
 
 		// #### L2
 		// Set source MAC to own:
@@ -209,7 +250,12 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 		// Set destination IP to bcast:
 		inet_pton(AF_INET, BCAST_DSTIP, &ip_hdr->ip_dst);
 
+
 		// Checksumming:
+
+		udp_hdr->check = 0x0;
+	  	//udp_hdr->check = udp_checksum(packet, pkthdr->len);
+	
 		ip_hdr->ip_sum = 0x0;
 		ip_hdr->ip_sum = compute_checksum((unsigned short*)ip_hdr, ip_hdr->ip_hl<<2);
 
@@ -232,6 +278,11 @@ void bm_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char* pac
 		inet_pton(AF_INET, MCAST_GROUP, &ip_hdr->ip_dst);
 
 		// Checksumming:
+
+
+		udp_hdr->check = 0x0;
+	  	//udp_hdr->check = udp_checksum(packet, pkthdr->len);
+
 		ip_hdr->ip_sum = 0x0;
 		ip_hdr->ip_sum = compute_checksum((unsigned short*)ip_hdr, ip_hdr->ip_hl<<2);
 
