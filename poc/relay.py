@@ -78,4 +78,10 @@ def pkt(hdr, data):
 		sys.stdout.write("IN: "+str(cnt_in)+" OUT: "+str(cnt_out)+chr(13))
                 sys.stdout.flush()
 
-cap.loop(-1, pkt)
+try:
+	cap.loop(-1, pkt)
+except (KeyboardInterrupt, SystemExit):
+	print "..."
+	print "Exiting after ",cnt_in,"in /",cnt_out,"out packets."
+	sys.exit()
+	
