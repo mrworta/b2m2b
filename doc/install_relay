@@ -1,0 +1,25 @@
+#
+# To run the simple relay (not the scapy version) you need some packages:
+##
+#
+
+Packages
+------
+
+python python-dev python-pip tshark tcpdump git make gcc libpcap-dev
+
+
+Python Stuff
+------
+pip install pcapy impacket
+
+
+####
+
+NOTE:	Depending on your network driver / hardware you might need to turn of VLAN offloading and/or unload the 8021q kernel module!!!
+	( ethtool -K eth0 rxvlan off &&  ethtool -K eth0 txvlan off )
+
+
+####
+
+
