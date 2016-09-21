@@ -1,8 +1,0 @@
-#!/bin/bash
-#ZONE=`seq 101 115`		# A
-#ZONE=`seq 201 212`		# B
-#ZONE=`seq 301 306`		# C(c/a)
-ZONE="2 3 4 5 15 20"		# D
-#ZONE=`seq 101 115`		# Test
-
-echo $ZONE
