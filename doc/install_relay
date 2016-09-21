@@ -3,7 +3,6 @@
 sudo apt-get install git make python python-pip libpcap-dev python-dev
 sudo pip install pcapy impacket
 
-
 #
 # To run the simple relay (not the scapy version) you need some packages:
 ##
