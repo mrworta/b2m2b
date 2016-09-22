@@ -1,6 +1,6 @@
 
 #!/bin/bash
-sudo apt-get install git make python python-pip libpcap-dev python-dev
+sudo apt-get install git make python python-pip libpcap-dev python-dev ethtool tmux
 sudo pip install pcapy impacket
 
 #
