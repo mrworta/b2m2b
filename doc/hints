@@ -1,0 +1,1 @@
+ethtool -K eth0 rxvlan off &&  ethtool -K eth0 txvlan of
