@@ -66,11 +66,10 @@ def pkt(hdr, data):
 		# (un)Tagging impossible. Skip this packet.
 		return
 
-	
 	# Handle VLAN learning:	
 	if LEARN_VLANS and not (in_vlan in VLANS): 
 		VLANS.append(in_vlan)	
-		if VERBOSE > 0: print "Added VLAN:",in_vlan
+		if VERBOSE > 0: print "Added VLAN:",in_vlan,chr(13)
 
 	cnt_in += 1
 
