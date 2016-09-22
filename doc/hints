@@ -1,1 +1,6 @@
-ethtool -K eth0 rxvlan off &&  ethtool -K eth0 txvlan of
+# For network cards with vlan offloading, you need to turn it off:
+
+#eg.: 
+
+ethtool -K eth0 rxvlan off &&  ethtool -K eth0 txvlan off
+ethtool -K enp12s0 rxvlan off &&  ethtool -K enp12s0 txvlan off
