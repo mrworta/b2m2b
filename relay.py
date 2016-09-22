@@ -29,7 +29,7 @@ VLANS = [20]
 LEARN_VLANS = True
 #
 #
-OWN_IF = "eth0"
+OWN_IF = "enp12s0"
 USE_PROM = True
 MTU = 1500
 LAZY = 100
@@ -69,7 +69,7 @@ def pkt(hdr, data):
 	# Handle VLAN learning:	
 	if LEARN_VLANS and not (in_vlan in VLANS): 
 		VLANS.append(in_vlan)	
-		if VERBOSE > 0: print "Added VLAN:",in_vlan,chr(13)
+		if VERBOSE > 0: print chr(13),"Added VLAN:",in_vlan,chr(13)
 
 	cnt_in += 1
 
