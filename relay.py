@@ -69,7 +69,11 @@ def pkt(hdr, data):
 	# Handle VLAN learning:	
 	if LEARN_VLANS and not (in_vlan in VLANS): 
 		VLANS.append(in_vlan)	
-		if VERBOSE > 0: print chr(13),"Added VLAN:",in_vlan,chr(13)
+		
+		if VERBOSE > 0: 
+				sys.stdout.flush()
+				print chr(13),"Added VLAN:",in_vlan,chr(13)
+				sys.stdout.flush()
 
 	cnt_in += 1
 
