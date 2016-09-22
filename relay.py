@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # 
 # Selective BroadCast relay
-# v0.2 / MrWorta
+# v0.3 / MrWorta
 # - Requires tcpdump, impacket and pcapy
 # - No error handling yet
 #
@@ -25,7 +25,7 @@ VERBOSE = 1
 #
 #VLANS = [10,11,12,13,14,15,16,17,18,19,20]
 #
-VLANS = []
+VLANS = [20]
 LEARN_VLANS = True
 #
 #
@@ -104,7 +104,6 @@ def pkt(hdr, data):
 			sys.stdout.write(">"+str(out_vlan))
 			sys.stdout.flush()
 
-
 	# Debugging / Counters
 	if VERBOSE > 5: print "."
 	if VERBOSE == 1: 
@@ -117,4 +116,3 @@ except (KeyboardInterrupt, SystemExit):
 	print "..."
 	print "Exiting after ",cnt_in,"in /",cnt_out,"out packets."
 	sys.exit()
-	
