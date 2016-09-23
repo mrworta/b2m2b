@@ -25,7 +25,7 @@ VERBOSE = 1
 #
 #VLANS = [10,11,12,13,14,15,16,17,18,19,20]
 #
-VLANS = [20]
+VLANS = [15,20]
 LEARN_VLANS = True
 #
 #
