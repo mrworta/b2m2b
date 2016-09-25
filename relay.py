@@ -25,8 +25,14 @@ VERBOSE = 1
 #
 #VLANS = [10,11,12,13,14,15,16,17,18,19,20]
 #
-VLANS = [15,20]
+VLANS = [15]
 LEARN_VLANS = True
+#
+# Limit learn range if multithread id used.
+# System needs one shared VLAN (in List).
+#
+LEARN_LOW = 100
+LEARN_HIGH = LEARN_LOW + 999
 #
 #
 OWN_IF = "enp12s0"
@@ -67,13 +73,13 @@ def pkt(hdr, data):
 		return
 
 	# Handle VLAN learning:	
-	if LEARN_VLANS and not (in_vlan in VLANS): 
-		VLANS.append(in_vlan)	
-		
-		if VERBOSE > 0: 
-				sys.stdout.flush()
-				print chr(13),"Added VLAN:",in_vlan,chr(13)
-				sys.stdout.flush()
+	if LEARN_VLANS:
+		if in_vlan >= LEARN_LOW and in_vlan <= LEARN_HIGH:
+			if not (in_vlan in VLANS): 
+				VLANS.append(in_vlan)	
+				if VERBOSE > 0: 
+					print chr(13),"Added VLAN:",in_vlan,chr(13)
+					sys.stdout.flush()
 
 	cnt_in += 1
 
