@@ -25,11 +25,12 @@ VERBOSE = 1
 #
 #VLANS = [10,11,12,13,14,15,16,17,18,19,20]
 #
-VLANS = [15,20]
+VLANS = [15,20,5]
+VLANS_BLACKLIST = [666,667]
 LEARN_VLANS = True
 #
 #
-OWN_IF = "enp12s0"
+OWN_IF = "ens224"
 USE_PROM = True
 MTU = 1500
 LAZY = 100
@@ -65,6 +66,8 @@ def pkt(hdr, data):
 	except IndexError:
 		# (un)Tagging impossible. Skip this packet.
 		return
+
+        if (in_vlan in VLANS_BLACKLIST): return
 
 	# Handle VLAN learning:	
 	if LEARN_VLANS and not (in_vlan in VLANS): 
