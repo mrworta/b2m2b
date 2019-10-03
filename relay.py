@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # 
 # Selective BroadCast relay
 # v0.3 / MrWorta
@@ -67,7 +67,8 @@ def pkt(hdr, data):
 		# (un)Tagging impossible. Skip this packet.
 		return
 
-        if (in_vlan in VLANS_BLACKLIST): return
+        if (in_vlan in VLANS_BLACKLIST): 
+		return
 
 	# Handle VLAN learning:	
 	if LEARN_VLANS and not (in_vlan in VLANS): 
