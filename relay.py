@@ -67,7 +67,7 @@ def pkt(hdr, data):
 		# (un)Tagging impossible. Skip this packet.
 		return
 
-        if (in_vlan in VLANS_BLACKLIST): 
+	if in_vlan in VLANS_BLACKLIST:
 		return
 
 	# Handle VLAN learning:	
@@ -76,7 +76,7 @@ def pkt(hdr, data):
 		
 		if VERBOSE > 0: 
 				sys.stdout.flush()
-				print chr(13),"Added VLAN:",in_vlan,chr(13)
+				print(chr(13),"Added VLAN:",in_vlan,chr(13))
 				sys.stdout.flush()
 
 	cnt_in += 1
@@ -90,7 +90,7 @@ def pkt(hdr, data):
 	# To the dirty work:
 
 	for out_vlan in VLANS:
-		if (in_vlan == out_vlan): continue
+		if in_vlan == out_vlan: continue
 
 		# Remove old tag and add new one:
 		tag = eth.pop_tag()
@@ -101,7 +101,7 @@ def pkt(hdr, data):
 			# Will it blend?
 			s.send(eth.get_packet())
 		except:
-			print "E"
+			print("E")
 			continue
 
 		cnt_out += 1
@@ -112,14 +112,14 @@ def pkt(hdr, data):
 			sys.stdout.flush()
 
 	# Debugging / Counters
-	if VERBOSE > 5: print "."
+	if VERBOSE > 5: print(".")
 	if VERBOSE == 1: 
 		sys.stdout.write("IN: "+str(cnt_in)+" OUT: "+str(cnt_out)+chr(13))
-                sys.stdout.flush()
+			sys.stdout.flush()
 
 try:
 	cap.loop(-1, pkt)
 except (KeyboardInterrupt, SystemExit):
-	print "..."
-	print "Exiting after ",cnt_in,"in /",cnt_out,"out packets."
+	print("...")
+	print("Exiting after ",cnt_in,"in /",cnt_out,"out packets.")
 	sys.exit()
