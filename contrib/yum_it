@@ -1,2 +1,2 @@
 #!/bin/bash
-yum install git python3-pip gcc make gcc-c++ python3-devel libpcap-devel
+yum install git python3-pip gcc make gcc-c++ python3-devel libpcap-devel tmux

@@ -7,6 +7,7 @@
 #
 import struct
 import pcapy
+from binascii import hexlify
 from impacket.ImpactPacket import *
 from impacket.ImpactDecoder import *
 from socket import *
@@ -26,7 +27,7 @@ VERBOSE = 1
 #VLANS = [10,11,12,13,14,15,16,17,18,19,20]
 #
 VLANS = [15,20,5]
-VLANS_BLACKLIST = [666,667]
+VLANS_BLACKLIST = [666,667,668,669,902]
 LEARN_VLANS = True
 #
 #
@@ -47,6 +48,12 @@ cap.setfilter(PACKET_FILTER)
 # Open output Device as raw:
 s = socket(AF_PACKET, SOCK_RAW)
 s.bind((OWN_IF, 0))
+
+print('Own MAC: ')
+print(hexlify(s.getsockname()[4]))
+
+own_mac = s.getsockname()[4]
+
 
 cnt_in = 0
 cnt_out = 0
@@ -94,8 +101,12 @@ def pkt(hdr, data):
 
 		# Remove old tag and add new one:
 		tag = eth.pop_tag()
+	  		
 		tag.set_vid(out_vlan)
 		eth.push_tag(tag)
+
+		# Set source to own interface mac, not to trigger VMware security... ;)
+		eth.set_ether_shost(own_mac)
 
 		try:
 			# Will it blend?
@@ -115,7 +126,7 @@ def pkt(hdr, data):
 	if VERBOSE > 5: print(".")
 	if VERBOSE == 1: 
 		sys.stdout.write("IN: "+str(cnt_in)+" OUT: "+str(cnt_out)+chr(13))
-			sys.stdout.flush()
+		sys.stdout.flush()
 
 try:
 	cap.loop(-1, pkt)
